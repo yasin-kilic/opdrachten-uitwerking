@@ -56,8 +56,7 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Reiziger managed = em.find(Reiziger.class, reiziger.getId());
-            if (managed != null) em.remove(managed);
+	    	em.remove(em.merge(reiziger));
             tx.commit();
             return true;
         } catch (Exception e) {
