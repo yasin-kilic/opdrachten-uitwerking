@@ -70,16 +70,8 @@ public class AdresDAOHibernate implements AdresDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-
-            Adres managed = em.find(Adres.class, adres.getId());
-            if (managed != null) {
-
-                Reiziger r = managed.getReiziger();
-                if (r != null) r.setAdres(null);
-
-                em.remove(managed);
-            }
-
+            Adres managedAdres = em.merge(adres);
+            em.remove(managedAdres);
             tx.commit();
             return true;
         } catch (Exception e) {

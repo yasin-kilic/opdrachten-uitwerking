@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.OneToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.FetchType;
 
 @Entity
 @Table(name = "adres")
@@ -27,7 +28,7 @@ public class Adres {
     @Column(nullable = false)
     private String woonplaats;
 
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "reiziger_id", unique = true, nullable = false)
     private Reiziger reiziger;
 

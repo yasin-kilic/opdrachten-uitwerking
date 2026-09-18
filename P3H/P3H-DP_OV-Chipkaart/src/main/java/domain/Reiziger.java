@@ -6,6 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.OneToOne;
 import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import java.sql.Date;
 
 @Entity
@@ -27,7 +28,8 @@ public class Reiziger {
     private Date geboortedatum;
 
     @OneToOne(mappedBy = "reiziger",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
             orphanRemoval = true)
     private Adres adres;
 
