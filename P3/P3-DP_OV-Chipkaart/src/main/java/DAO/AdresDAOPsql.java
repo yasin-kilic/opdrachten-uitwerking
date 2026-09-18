@@ -10,9 +10,14 @@ import java.util.List;
 public class AdresDAOPsql implements AdresDAO {
 
     private final Connection conn;
+    private ReizigerDAO reizigerDAO;
 
     public AdresDAOPsql(Connection conn) {
         this.conn = conn;
+    }
+
+    public void setReizigerDAO(ReizigerDAO reizigerDAO) {
+        this.reizigerDAO = reizigerDAO;
     }
 
     @Override
@@ -89,7 +94,8 @@ public class AdresDAOPsql implements AdresDAO {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) return null;
-                return mapAdres(rs);
+                Reiziger reiziger = reizigerDAO.findById(rs.getInt("reiziger_id"));
+                return mapAdres(rs, reiziger);
             }
         } catch (SQLException e) {
             System.err.println("Error in Adres.findById: " + e.getMessage());
@@ -108,9 +114,7 @@ public class AdresDAOPsql implements AdresDAO {
             ps.setInt(1, r.getId());
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) return null;
-                Adres a = mapAdres(rs);
-                a.setReiziger(r);
-                return a;
+                return mapAdres(rs, r);
             }
         } catch (SQLException e) {
             System.err.println("Error in Adres.findByReiziger: " + e.getMessage());
@@ -120,34 +124,22 @@ public class AdresDAOPsql implements AdresDAO {
 
     @Override
     public List<Adres> findAll() {
-        String sql = """
-            SELECT adres_id, postcode, huisnummer, straat, woonplaats, reiziger_id
-            FROM adres
-            ORDER BY adres_id
-        """;
         List<Adres> result = new ArrayList<>();
-        try (PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                result.add(mapAdres(rs));
+        for (Reiziger reiziger : reizigerDAO.findAll()) {
+            if (reiziger.getAdres() != null) {
+                result.add(reiziger.getAdres());
             }
-        } catch (SQLException e) {
-            System.err.println("Error in Adres.findAll: " + e.getMessage());
         }
         return result;
     }
 
-    private Adres mapAdres(ResultSet rs) throws SQLException {
+    private Adres mapAdres(ResultSet rs, Reiziger reiziger) throws SQLException {
         int adresId = rs.getInt("adres_id");
         String postcode = rs.getString("postcode");
         String huisnummer = rs.getString("huisnummer");
         String straat = rs.getString("straat");
         String woonplaats = rs.getString("woonplaats");
-        int reizigerId = rs.getInt("reiziger_id");
 
-        Reiziger stub = new Reiziger();
-        stub.setId(reizigerId);
-
-        return new Adres(adresId, postcode, huisnummer, straat, woonplaats, stub);
+        return new Adres(adresId, postcode, huisnummer, straat, woonplaats, reiziger);
     }
 }

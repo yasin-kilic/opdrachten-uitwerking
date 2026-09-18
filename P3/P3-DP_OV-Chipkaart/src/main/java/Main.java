@@ -22,8 +22,9 @@ public class Main
     {
         try (Connection conn = getConnection())
         {
-            AdresDAO adresDAO = new AdresDAOPsql(conn);
+            AdresDAOPsql adresDAO = new AdresDAOPsql(conn);
             ReizigerDAOPsql reizigerDAO = new ReizigerDAOPsql(conn);
+            adresDAO.setReizigerDAO(reizigerDAO);
             reizigerDAO.setAdresDAO(adresDAO);
 
             testReizigerDAO(reizigerDAO, adresDAO);

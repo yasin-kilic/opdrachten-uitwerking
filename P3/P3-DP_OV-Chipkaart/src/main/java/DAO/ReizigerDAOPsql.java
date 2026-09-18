@@ -98,29 +98,11 @@ public class ReizigerDAOPsql implements ReizigerDAO
 
             boolean ok = ps.executeUpdate() == 1;
 
-            if (ok && adresDAO != null)
+            if (ok && adresDAO != null && reiziger.getAdres() != null)
             {
-                Adres bestaand = adresDAO.findByReiziger(reiziger);
-
-                if (reiziger.getAdres() == null)
-                {
-                    if (bestaand != null) ok = adresDAO.delete(bestaand);
-                }
-                else
-                {
-                    Adres a = reiziger.getAdres();
-                    a.setReiziger(reiziger);
-
-                    if (bestaand == null)
-                    {
-                        ok = adresDAO.save(a);
-                    }
-                    else
-                    {
-                        a.setId(bestaand.getId());
-                        ok = adresDAO.update(a);
-                    }
-                }
+                Adres a = reiziger.getAdres();
+                a.setReiziger(reiziger);
+                ok = adresDAO.update(a);
             }
 
             return ok;
@@ -139,10 +121,9 @@ public class ReizigerDAOPsql implements ReizigerDAO
 
         try
         {
-            if (adresDAO != null)
+            if (adresDAO != null && reiziger.getAdres() != null)
             {
-                Adres a = adresDAO.findByReiziger(reiziger);
-                if (a != null) adresDAO.delete(a);
+                adresDAO.delete(reiziger.getAdres());
             }
 
             try (PreparedStatement ps = _connection.prepareStatement(sql))

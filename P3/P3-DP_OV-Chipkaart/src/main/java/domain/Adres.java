@@ -40,7 +40,7 @@ public class Adres {
 
     @Override
     public String toString() {
-        return String.format("Adres {#%d %s %s-%s}",
-                id, postcode.substring(0, 4), postcode.substring(4), huisnummer);
+        return String.format("Adres {#%d %s %s-%s, reiziger #%d}",
+                id, postcode.substring(0, 4), postcode.substring(4), huisnummer, reiziger.getId());
     }
 }
