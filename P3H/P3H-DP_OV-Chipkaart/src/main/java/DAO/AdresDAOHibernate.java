@@ -70,10 +70,13 @@ public class AdresDAOHibernate implements AdresDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Adres managedAdres = em.merge(adres);
-            em.remove(managedAdres);
+            int resultaat = em.createQuery(
+                    "DELETE FROM Adres a WHERE a.id = :id"
+            )
+                    .setParameter("id", adres.getId())
+                    .executeUpdate();
             tx.commit();
-            return true;
+            return resultaat > 0;
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
