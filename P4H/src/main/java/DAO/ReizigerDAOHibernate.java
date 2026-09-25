@@ -72,7 +72,16 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
     public Reiziger findById(int id) {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.find(Reiziger.class, id);
+            TypedQuery<Reiziger> q = em.createQuery(
+                    "SELECT DISTINCT r FROM Reiziger r " +
+                            "LEFT JOIN FETCH r.adres " +
+                            "LEFT JOIN FETCH r.ovChipkaarten " +
+                            "WHERE r.id = :id",
+                    Reiziger.class
+            );
+            q.setParameter("id", id);
+            List<Reiziger> res = q.getResultList();
+            return res.isEmpty() ? null : res.get(0);
         } finally {
             em.close();
         }
@@ -83,7 +92,10 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
         EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<Reiziger> q = em.createQuery(
-                    "SELECT r FROM Reiziger r WHERE r.geboortedatum = :d ORDER BY r.id",
+                    "SELECT DISTINCT r FROM Reiziger r " +
+                            "LEFT JOIN FETCH r.adres " +
+                            "LEFT JOIN FETCH r.ovChipkaarten " +
+                            "WHERE r.geboortedatum = :d ORDER BY r.id",
                     Reiziger.class
             );
             q.setParameter("d", datum);
@@ -97,7 +109,13 @@ public class ReizigerDAOHibernate implements ReizigerDAO {
     public List<Reiziger> findAll() {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.createQuery("SELECT r FROM Reiziger r ORDER BY r.id", Reiziger.class)
+            return em.createQuery(
+                            "SELECT DISTINCT r FROM Reiziger r " +
+                                    "LEFT JOIN FETCH r.adres " +
+                                    "LEFT JOIN FETCH r.ovChipkaarten " +
+                                    "ORDER BY r.id",
+                            Reiziger.class
+                    )
                     .getResultList();
         } finally {
             em.close();

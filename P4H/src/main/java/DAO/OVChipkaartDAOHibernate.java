@@ -58,10 +58,13 @@ public class OVChipkaartDAOHibernate implements OVChipkaartDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            OVChipkaart managedKaart = em.merge(kaart);
-            em.remove(managedKaart);
+            int resultaat = em.createQuery(
+                    "DELETE FROM OVChipkaart k WHERE k.kaartNummer = :id"
+            )
+                    .setParameter("id", kaart.getKaartNummer())
+                    .executeUpdate();
             tx.commit();
-            return true;
+            return resultaat > 0;
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();

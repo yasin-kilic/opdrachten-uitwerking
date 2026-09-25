@@ -32,13 +32,13 @@ public class Reiziger {
 
     @OneToOne(mappedBy = "reiziger",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true)
     private Adres adres;
 
     @OneToMany(mappedBy = "reiziger",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true)
     private List<OVChipkaart> ovChipkaarten = new ArrayList<>();
 
