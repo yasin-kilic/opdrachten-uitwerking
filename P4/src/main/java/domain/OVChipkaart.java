@@ -37,7 +37,12 @@ public class OVChipkaart {
 
     @Override
     public String toString() {
+        String reizigerStr = reiziger == null
+                ? "geen"
+                : "#" + reiziger.getId() + " " + reiziger.getNaam();
+
         return "OVChipkaart {#" + kaartNummer + " klasse=" + klasse +
-                " saldo=" + saldo + " geldigTot=" + geldigTot + "}";
+                " saldo=" + saldo + " geldigTot=" + geldigTot +
+                " reiziger=" + reizigerStr + "}";
     }
 }

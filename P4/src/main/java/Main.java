@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main
@@ -79,14 +78,12 @@ public class Main
         Adres sietskeAdres = new Adres(nieuwAdresId, "3511LX", "37", "Nieuwegracht", "Utrecht", sietske);
         sietske.setAdres(sietskeAdres);
 
-        List<OVChipkaart> kaarten = new ArrayList<>();
         OVChipkaart kaart1 = new OVChipkaart(11101, Date.valueOf("2028-12-31"), 2,
                 new BigDecimal("25.00"), sietske);
         OVChipkaart kaart2 = new OVChipkaart(11102, Date.valueOf("2027-12-31"), 1,
                 new BigDecimal("10.00"), sietske);
-        kaarten.add(kaart1);
-        kaarten.add(kaart2);
-        sietske.setOvChipkaarten(kaarten);
+        sietske.voegToeOVChipkaart(kaart1);
+        sietske.voegToeOVChipkaart(kaart2);
 
         System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
         rdao.save(sietske);
@@ -193,9 +190,7 @@ public class Main
 
         OVChipkaart kaart = new OVChipkaart(kaartNummer, Date.valueOf("2029-12-31"), 2,
                 new BigDecimal("20.00"), reiziger);
-        List<OVChipkaart> kaarten = new ArrayList<>();
-        kaarten.add(kaart);
-        reiziger.setOvChipkaarten(kaarten);
+        reiziger.voegToeOVChipkaart(kaart);
 
         System.out.println("[Test] OVChipkaartDAO.save(): " + kdao.save(kaart));
         System.out.println("[Test] OVChipkaartDAO.findById(" + kaartNummer + "): " + kdao.findById(kaartNummer));
@@ -218,6 +213,7 @@ public class Main
         System.out.println("Na update: " + kdao.findById(kaartNummer));
 
         System.out.println("[Test] OVChipkaartDAO.delete(): " + kdao.delete(kaart));
+        reiziger.verwijderOVChipkaart(kaart);
         System.out.println("Na delete: " + kdao.findById(kaartNummer));
 
         rdao.delete(reiziger);

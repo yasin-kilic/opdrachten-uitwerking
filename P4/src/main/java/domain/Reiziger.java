@@ -54,7 +54,33 @@ public class Reiziger {
     public void setAdres(Adres adres) { this.adres = adres; }
 
     public List<OVChipkaart> getOvChipkaarten() { return ovChipkaarten; }
-    public void setOvChipkaarten(List<OVChipkaart> ovChipkaarten) { this.ovChipkaarten = ovChipkaarten; }
+    public void setOvChipkaarten(List<OVChipkaart> ovChipkaarten) {
+        List<OVChipkaart> nieuweKaarten = ovChipkaarten == null
+                ? new ArrayList<>()
+                : new ArrayList<>(ovChipkaarten);
+
+        for (OVChipkaart kaart : new ArrayList<>(this.ovChipkaarten)) {
+            verwijderOVChipkaart(kaart);
+        }
+        for (OVChipkaart kaart : nieuweKaarten) {
+            voegToeOVChipkaart(kaart);
+        }
+    }
+
+    public boolean voegToeOVChipkaart(OVChipkaart kaart) {
+        if (kaart == null || ovChipkaarten.contains(kaart)) return false;
+
+        boolean toegevoegd = ovChipkaarten.add(kaart);
+        if (toegevoegd) kaart.setReiziger(this);
+        return toegevoegd;
+    }
+
+    public boolean verwijderOVChipkaart(OVChipkaart kaart) {
+        if (kaart == null || !ovChipkaarten.remove(kaart)) return false;
+
+        if (kaart.getReiziger() == this) kaart.setReiziger(null);
+        return true;
+    }
 
     @Override
     public String toString() {
@@ -62,7 +88,7 @@ public class Reiziger {
         String init = (voorletters != null && !voorletters.endsWith(".")) ? (voorletters + ".") : voorletters;
 
         String adresStr = (adres != null) ? (", " + adres) : "";
-        return String.format("Reiziger {#%d %s%s %s, geb. %s%s}",
-                id, init, tv, achternaam, geboortedatum, adresStr);
+        return String.format("Reiziger {#%d %s%s %s, geb. %s%s, OV-chipkaarten=%s}",
+                id, init, tv, achternaam, geboortedatum, adresStr, ovChipkaarten);
     }
 }
